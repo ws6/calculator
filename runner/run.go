@@ -6,14 +6,12 @@ import (
 	"os"
 )
 
-func Run() {
+func Run(ctx context.Context) {
 	configer, err := GetConfiger()
 	if err != nil {
 		log.Fatal(err.Error())
 		os.Exit(-1)
 	}
-	ctx, cancelFn := context.WithCancel(context.Background())
-	defer cancelFn()
 
 	//TODO add loader
 	//non-blocking

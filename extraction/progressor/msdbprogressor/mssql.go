@@ -3,8 +3,9 @@ package msdbprogressor
 //mssql.go using an existing table schema to store the progress.
 
 import (
-	"calculator/extraction/progressor"
 	"fmt"
+
+	"github.com/ws6/calculator/extraction/progressor"
 
 	"github.com/beego/beego/v2/core/config"
 	_ "github.com/denisenkom/go-mssqldb"

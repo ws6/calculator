@@ -8,6 +8,7 @@ require (
 	github.com/gomodule/redigo v2.0.0+incompatible
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.8.1
+	github.com/tidwall/gjson v1.14.0
 	github.com/ws6/klib v0.0.0-20211103233557-61a8ddba7496
 	github.com/ws6/msi v1.2.1
 )
@@ -33,6 +34,8 @@ require (
 	github.com/segmentio/kafka-go v0.4.23 // indirect
 	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
+	github.com/tidwall/match v1.1.1 // indirect
+	github.com/tidwall/pretty v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5 // indirect
 	golang.org/x/net v0.0.0-20210825183410-e898025ed96a // indirect
 	golang.org/x/sys v0.0.0-20210831042530-f4d43177bf5e // indirect

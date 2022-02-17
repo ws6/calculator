@@ -52,7 +52,7 @@ func getSectionHasRef(configer config.Configer, sectionName string, ret map[stri
 	seen[sectionName] = true
 	m, err := configer.GetSection(sectionName)
 	if err != nil {
-		return err
+		return fmt.Errorf(`GetSection[%s]:%s`, sectionName, err.Error())
 	}
 	for k, v := range m {
 		if !isSectionName(v) {
