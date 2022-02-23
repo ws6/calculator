@@ -4,6 +4,7 @@ package msdbprogressor
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/ws6/calculator/extraction/progressor"
 
@@ -173,6 +174,7 @@ func (self *MSdb) SaveProgress(name string, p *progressor.Progress) error {
 	if err != nil {
 		return err
 	}
+	tostore[`UpdatedAt`] = time.Now()
 	return self.table.Update(
 		msi.M{`namespace`: self.dbnamespace,
 			`k`: name,
