@@ -10,7 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tidwall/gjson v1.14.0
 	github.com/ws6/klib v0.0.0-20211103233557-61a8ddba7496
-	github.com/ws6/msi v1.2.1
+	github.com/ws6/msi v1.2.2-0.20220223232922-7cf6d9b3cfcc
 )
 
 require (

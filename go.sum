@@ -436,6 +436,8 @@ github.com/ws6/klib v0.0.0-20211103233557-61a8ddba7496 h1:jYVuh8ibIzdjhiBq/0hwWn
 github.com/ws6/klib v0.0.0-20211103233557-61a8ddba7496/go.mod h1:12l8dLFnxB2kpK3xrWoPLCVoBZyzamzLcVuIvdXCDnQ=
 github.com/ws6/msi v1.2.1 h1:uzFEzvQcO9M7iNcxXWzqyPrurfDnmf8Ghq41D1bexkQ=
 github.com/ws6/msi v1.2.1/go.mod h1:jESM2KDBQho7wl3f2nL05iakT2uWBhdOEaJr2IBgkPI=
+github.com/ws6/msi v1.2.2-0.20220223232922-7cf6d9b3cfcc h1:ipXK3HTIMEokXp8L6iCzXs+KkHPA9uwUGpW5mhpwMCk=
+github.com/ws6/msi v1.2.2-0.20220223232922-7cf6d9b3cfcc/go.mod h1:jESM2KDBQho7wl3f2nL05iakT2uWBhdOEaJr2IBgkPI=
 github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c h1:u40Z8hqBAAQyv+vATcGgV0YCnDjqSL7/q/JyPhhJSPk=
 github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c/go.mod h1:lB8K/P019DLNhemzwFU4jHLhdvlE6uDZjXFejJXr49I=
 github.com/xdg/stringprep v1.0.0 h1:d9X0esnoa3dFsV0FG35rAT0RIhYFlPq7MiP+DW89La0=
