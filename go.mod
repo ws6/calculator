@@ -9,7 +9,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tidwall/gjson v1.14.0
-	github.com/ws6/klib v0.0.0-20211103233557-61a8ddba7496
+	github.com/ws6/klib v0.0.0-20220216230127-30b001ed47c7
 	github.com/ws6/msi v1.2.2-0.20220223233655-f72b2e1df9e5
 )
 

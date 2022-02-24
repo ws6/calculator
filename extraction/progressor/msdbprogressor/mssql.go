@@ -76,7 +76,6 @@ func (self *MSdb) GetProgress(name string) (*progressor.Progress, error) {
 		}
 		return nil, err
 	}
-
 	return toprogress(found)
 }
 
