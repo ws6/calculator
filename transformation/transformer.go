@@ -25,7 +25,7 @@ type Transformer interface {
 	Type() string //event producer type for consumer to use
 	NewTransformer(*confighelper.SectionConfig) (Transformer, error)
 	//Transform could generate one or more messages
-	Transform(context.Context, *klib.Message) ([]*klib.Message, error)
+	Transform(context.Context, *klib.Message) (chan *klib.Message, error)
 	Close() error
 }
 
@@ -137,8 +137,8 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 		if err != nil {
 			return err
 		}
-
-		for _, m := range topub {
+		//make sure closed it by Transform
+		for m := range topub {
 			producerChan <- m
 		}
 
