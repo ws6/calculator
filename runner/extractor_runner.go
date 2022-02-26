@@ -14,6 +14,7 @@ import (
 
 	"github.com/ws6/calculator/extraction"
 	"github.com/ws6/calculator/utils/confighelper"
+	"github.com/ws6/dlock"
 
 	"github.com/beego/beego/v2/core/config"
 	beego "github.com/beego/beego/v2/server/web"
@@ -35,6 +36,7 @@ func GetConfiger() (config.Configer, error) {
 //RunExtractors TODO add to cron by option
 func RunExtractors(ctx context.Context, configer config.Configer) error {
 	scheduler := cron.New()
+
 	allTypes := extraction.GetAllTypeNames()
 	log.Println(`registered extractors are`, strings.Join(allTypes, ","))
 	// extractor.GetAllType()
@@ -45,6 +47,7 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 		return err
 	}
 	log.Println(`installed extractors are:`, len(installed), strings.Join(installed, ","))
+
 	mutexes := make([]chan int, len(installed))
 
 	for i := range mutexes {
@@ -58,6 +61,24 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 		if err != nil {
 			log.Fatalf(`installed section[%s]:%s`, ins, err.Error())
 			return err
+		}
+
+		dlockConfigSection, err := configer.String(fmt.Sprintf(`%s::dlock_config_section`, ins))
+
+		dlockEnabled := false
+
+		var dl *dlock.Dlock
+		if err == nil {
+
+			dlockcfg, err1 := configer.GetSection(dlockConfigSection)
+			if err1 != nil {
+				return fmt.Errorf(`GetSection(dlockConfigSection):%s`, err.Error())
+			}
+			dl, err = dlock.NewDlock(dlockcfg)
+			if err != nil {
+				return fmt.Errorf(`NewDlock:%s`, err.Error())
+			}
+			dlockEnabled = true
 		}
 
 		ir := extraction.GetIncrefType(cfg[`type`])
@@ -84,8 +105,21 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 			log.Println(ins, `schedulers is `, schedule)
 			fmt.Println(`in order `, order, len(mutexes))
 			ch := mutexes[order]
+			var dmux *dlock.DMutex
+			if dlockEnabled {
+				k := fmt.Sprintf(`%d`, order)
+				dmux = dl.NewMutex(ctx, k)
+				fmt.Println(`dlock enabled`)
+			}
 			return func() {
-
+				//TODO add dlock
+				if dlockEnabled && dmux != nil {
+					if err := dmux.Lock(); err != nil {
+						fmt.Println(`dmux.Lock():%s`, err.Error())
+						return
+					}
+					defer dmux.Unlock()
+				}
 				select {
 				case n := <-ch:
 					//TODO report health and runnning state

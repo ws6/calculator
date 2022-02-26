@@ -9,6 +9,7 @@ require (
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tidwall/gjson v1.14.0
+	github.com/ws6/dlock v0.0.0-20210914210446-143d6f4ba022
 	github.com/ws6/klib v0.0.0-20220216230127-30b001ed47c7
 	github.com/ws6/msi v1.2.2-0.20220223233655-f72b2e1df9e5
 )
@@ -16,10 +17,13 @@ require (
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
+	github.com/go-redsync/redsync/v4 v4.4.1 // indirect
 	github.com/golang-sql/civil v0.0.0-20190719163853-cb61b32ac6fe // indirect
 	github.com/golang-sql/sqlexp v0.0.0-20170517235910-f1bb20e5a188 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
+	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/klauspost/compress v1.13.5 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
