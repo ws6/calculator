@@ -42,5 +42,5 @@ func (self *ExampleExtractor) GetChan(ctx context.Context, p *progressor.Progres
 }
 
 func main() {
-	runner.Run()
+	runner.Run(context.Background())
 }

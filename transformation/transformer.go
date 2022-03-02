@@ -25,7 +25,7 @@ type Transformer interface {
 	Type() string //event producer type for consumer to use
 	NewTransformer(*confighelper.SectionConfig) (Transformer, error)
 	//Transform could generate one or more messages
-	Transform(context.Context, *klib.Message) (chan *klib.Message, error)
+	Transform(context.Context, *klib.Message, chan<- *klib.Message) error
 	Close() error
 }
 
@@ -36,6 +36,7 @@ type MessageRouter map[string]chan *klib.Message
 //init a producer
 //call transform function of Transformer
 //forward the generated new message(s) to  producer
+
 func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _tr Transformer) error {
 	tr, err := _tr.NewTransformer(configer)
 	if err != nil {
@@ -104,7 +105,7 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 	if err != nil {
 		return fmt.Errorf(`producer NewKlib:%s`, err.Error())
 	}
-	size := 100
+	size := 1000
 	if n, err := configer.Configer.Int(fmt.Sprintf(`%s::producer_cap`, configer.SectionName)); err == nil {
 		if n > 0 {
 			size = n
@@ -133,13 +134,8 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 
 	eventbus.ConsumeLoop(ctx, eventBusTopic, func(kmsg *klib.Message) error {
 
-		topub, err := tr.Transform(ctx, kmsg)
-		if err != nil {
+		if err := tr.Transform(ctx, kmsg, producerChan); err != nil {
 			return err
-		}
-		//make sure closed it by Transform
-		for m := range topub {
-			producerChan <- m
 		}
 
 		return nil
