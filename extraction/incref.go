@@ -17,7 +17,8 @@ import (
 var log = loghelper.NewLogger()
 
 const (
-	CALCULATOR_CONFIGER_PATH = `CALCULATOR_CONFIGER_PATH`
+	CALCULATOR_CONFIGER_PATH   = `CALCULATOR_CONFIGER_PATH`
+	DEFAULT_PRODUCER_CHAN_SIZE = 1000
 )
 
 // type IncrefConfig struct {
@@ -193,6 +194,13 @@ func GetEventBus(cfg *confighelper.SectionConfig) (*klib.Klib, error) {
 func GetEventBusTopic(cfg *confighelper.SectionConfig) (string, error) {
 	return cfg.Configer.String(fmt.Sprintf(`%s::event_bus_topic`, cfg.SectionName))
 }
+func GetProducerChanCap(cfg *confighelper.SectionConfig) int {
+	ret, err := cfg.Configer.Int(fmt.Sprintf(`%s::producer_chan_size`, cfg.SectionName))
+	if err != nil {
+		return DEFAULT_PRODUCER_CHAN_SIZE
+	}
+	return ret
+}
 
 func MandateHeaders(ir ComputeUnit, msg *klib.Message) {
 	if msg.Headers == nil {
@@ -220,7 +228,7 @@ func Refresh(ctx context.Context, cfg *confighelper.SectionConfig, _ir Incref) (
 		return nil, fmt.Errorf(`event_bus_topic is empty`)
 	}
 
-	msgChan := make(chan *klib.Message, 100)
+	msgChan := make(chan *klib.Message, GetProducerChanCap(cfg))
 	defer close(msgChan)
 	go func() {
 		if err := eventBus.ProduceChan(ctx, topic, msgChan); err != nil {
