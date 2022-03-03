@@ -243,6 +243,8 @@ func Refresh(ctx context.Context, cfg *confighelper.SectionConfig, _ir Incref) (
 	if err != nil {
 		return ret, fmt.Errorf(`NewIncref:%s`, err.Error())
 	}
+	//clean up
+	defer ir.Close()
 
 	progDriver, err := cfg.Configer.String(
 		fmt.Sprintf(`%s::progressor`, cfg.SectionName),
@@ -256,17 +258,12 @@ func Refresh(ctx context.Context, cfg *confighelper.SectionConfig, _ir Incref) (
 	if err != nil {
 		return nil, fmt.Errorf(`InitProgrssorFromConfigSection:%s`, err.Error())
 	}
+	defer prog.Close()
+
 	if prog == nil {
 		return nil, fmt.Errorf(`prog is nil`)
 	}
 
-	//clean up
-	defer ir.Close()
-
-	// prog := progressor.GetInUsedProgressor()
-	if prog == nil {
-		return ret, fmt.Errorf(`no in used progress`)
-	}
 	progress, err := prog.GetProgress(ir.Name())
 	if err != nil {
 		if err != progressor.NOT_FOUND_PROGRESS {

@@ -75,6 +75,7 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 				return fmt.Errorf(`GetSection(%s):%s`, dlockConfigSection, err1.Error())
 			}
 			dl, err = dlock.NewDlock(dlockcfg)
+
 			if err != nil {
 				return fmt.Errorf(`NewDlock:%s`, err.Error())
 			}
@@ -114,11 +115,13 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 			return func() {
 				//TODO add dlock
 				if dlockEnabled && dmux != nil {
+
 					if err := dmux.Lock(); err != nil {
-						fmt.Println(`dmux.Lock():%s`, err.Error())
+						fmt.Println(ir.Name(), `dmux.Lock():`, err.Error())
 						return
 					}
 					defer dmux.Unlock()
+
 				}
 				select {
 				case n := <-ch:
