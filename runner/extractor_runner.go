@@ -68,7 +68,7 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 		dlockEnabled := false
 
 		var dl *dlock.Dlock
-		if err == nil {
+		if err == nil && dlockConfigSection != "" {
 
 			dlockcfg, err1 := configer.GetSection(dlockConfigSection)
 			if err1 != nil {
