@@ -68,7 +68,7 @@ func Refresh(ctx context.Context, cfg *confighelper.SectionConfig, IncrefName st
 	if err != nil {
 		return nil, fmt.Errorf(`InitProgrssorFromConfigSection:%s`, err.Error())
 	}
-	defer prog.Close()
+	// defer prog.Close()
 
 	if prog == nil {
 		return nil, fmt.Errorf(`prog is nil`)
