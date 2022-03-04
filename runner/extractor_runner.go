@@ -81,12 +81,15 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 			}
 			dlockEnabled = true
 		}
-
-		ir := extraction.GetIncrefType(cfg[`type`])
-		if ir == nil {
-			log.Println(`no incref implemented-`, cfg[`type`])
-			continue
+		IncrefName := cfg[`type`]
+		if IncrefName == "" {
+			return fmt.Errorf(`Section[%s]has no type defined`, ins)
 		}
+		// ir := extraction.GetIncrefType(cfg[`type`])
+		// if ir == nil {
+		// 	log.Println(`no incref implemented-`, cfg[`type`])
+		// 	continue
+		// }
 
 		//launch it
 		//ctx,  cfg, ir
@@ -117,7 +120,7 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 				if dlockEnabled && dmux != nil {
 
 					if err := dmux.Lock(); err != nil {
-						fmt.Println(ir.Name(), `dmux.Lock():`, err.Error())
+						fmt.Println(IncrefName, `dmux.Lock():`, err.Error())
 						return
 					}
 					defer dmux.Unlock()
@@ -126,15 +129,15 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 				select {
 				case n := <-ch:
 					//TODO report health and runnning state
-					stats, err := extraction.Refresh(ctx, _cfg, ir)
+					stats, err := extraction.Refresh(ctx, _cfg, IncrefName)
 					if err != nil {
 						log.Fatalf(`incref[%s] failed:%s`, ins, err.Error())
 						return
 					}
-					log.Println(ir.Type(), stats)
+					log.Println(IncrefName, ins, stats)
 					mutexes[order] <- n + 1
 				case <-time.After(time.Second * 10):
-					log.Println(`it seems another task is runnig`, ir.Type(), order)
+					log.Println(`it seems another task is runnig`, IncrefName, ins, order)
 
 				}
 
