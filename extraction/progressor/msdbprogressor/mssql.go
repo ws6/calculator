@@ -28,6 +28,7 @@ type MSdb struct {
 
 func (self *MSdb) Close() error {
 	if self.db != nil {
+		fmt.Println(`MSdb Prog dB closed`)
 		return self.db.Close()
 	}
 	return nil
