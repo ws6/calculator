@@ -41,11 +41,12 @@ func Refresh(ctx context.Context, cfg *confighelper.SectionConfig, IncrefName st
 
 	//TODO open a kmessage chan
 
-	ir := GetIncrefType(IncrefName)
-	if ir == nil {
+	irPre := GetIncrefType(IncrefName)
+	if irPre == nil {
 		return nil, fmt.Errorf(`incref [%s] not exist`, IncrefName)
 	}
-	if err := ir.NewIncref(cfg); err != nil {
+	ir, err := irPre.NewIncref(cfg)
+	if err != nil {
 		return nil, fmt.Errorf(`NewIncref[%s]:%s`, IncrefName, err.Error())
 	}
 	ret := new(RefreshStat)

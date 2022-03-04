@@ -21,15 +21,6 @@ const (
 	DEFAULT_PRODUCER_CHAN_SIZE = 1000
 )
 
-// type IncrefConfig struct {
-// 	//given incref a global access of other configurations
-// 	Configer config.Configer
-// 	//either given a section name from Configer to fetch
-// 	SectionName string
-// 	//or passed in a ConfigMap for boostrap
-// 	ConfigMap map[string]string
-// }
-
 type Incref interface {
 	GetChan(ctx context.Context, p *progressor.Progress) (chan map[string]interface{}, error)
 
@@ -93,7 +84,7 @@ func NewIncrefConfigFromConfiger(configer config.Configer, sectionName string) (
 type IncrefOptional interface {
 	SaveProgressOnFail(error) bool
 	//global configer and a particular section to boostrap
-	NewIncref(*confighelper.SectionConfig) error
+	NewIncref(*confighelper.SectionConfig) (Incref, error)
 	Close() error
 }
 
