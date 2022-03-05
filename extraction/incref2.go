@@ -94,8 +94,10 @@ func NewExtractor(ctx context.Context, cfg *confighelper.SectionConfig, IncrefNa
 
 	return ret, nil
 }
-
 func Refresh(ctx context.Context, extractor *Extractor) (*RefreshStat, error) {
+	return new(RefreshStat), nil
+}
+func Refreshbak(ctx context.Context, extractor *Extractor) (*RefreshStat, error) {
 	IncrefName := extractor.ir.Type()
 	defer func() {
 		fmt.Println(`Refresh exist`, IncrefName)
