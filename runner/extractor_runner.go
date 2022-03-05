@@ -14,7 +14,6 @@ import (
 
 	"github.com/ws6/calculator/extraction"
 	"github.com/ws6/calculator/utils/confighelper"
-	"github.com/ws6/dlock"
 
 	"github.com/beego/beego/v2/core/config"
 	beego "github.com/beego/beego/v2/server/web"
@@ -54,73 +53,54 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 		mutexes[i] = make(chan int, 1)
 		mutexes[i] <- 1
 	}
+	extractors := []*extraction.Extractor{}
 
-	for i, ins := range installed {
+	for _, ins := range installed {
 
 		cfg, err := confighelper.GetSectionHasRef(configer, ins)
 		if err != nil {
 			log.Fatalf(`installed section[%s]:%s`, ins, err.Error())
 			return err
 		}
-
-		dlockConfigSection, err := configer.String(fmt.Sprintf(`%s::dlock_config_section`, ins))
-
-		dlockEnabled := false
-
-		var dl *dlock.Dlock
-		if err == nil && dlockConfigSection != "" {
-
-			dlockcfg, err1 := configer.GetSection(dlockConfigSection)
-			if err1 != nil {
-				return fmt.Errorf(`GetSection(%s):%s`, dlockConfigSection, err1.Error())
-			}
-			dl, err = dlock.NewDlock(dlockcfg)
-
-			if err != nil {
-				return fmt.Errorf(`NewDlock:%s`, err.Error())
-			}
-			dlockEnabled = true
-		}
 		IncrefName := cfg[`type`]
 		if IncrefName == "" {
 			return fmt.Errorf(`Section[%s]has no type defined`, ins)
 		}
-		// ir := extraction.GetIncrefType(cfg[`type`])
-		// if ir == nil {
-		// 	log.Println(`no incref implemented-`, cfg[`type`])
-		// 	continue
-		// }
 
-		//launch it
-		//ctx,  cfg, ir
 		_cfg, err := extraction.NewIncrefConfigFromConfiger(configer, ins)
 		if err != nil {
 			log.Fatal(`installed section:`, err.Error())
 			return err
 		}
-		log.Println(`made cofig`)
+		extractor, err := extraction.NewExtractor(ctx, _cfg, IncrefName)
+		if err != nil {
+			return fmt.Errorf(`NewExtractor[%s]:%s`, IncrefName, err.Error())
+		}
+
+		defer extractor.Close()
+
 		schedule, err := configer.String(fmt.Sprintf(`extractors::scheduler.%s`, ins))
 		if err != nil {
 			return fmt.Errorf(`get scheduler:%s`, err.Error())
 		}
+		extractor.Scheduler = schedule
+		extractors = append(extractors, extractor)
+
+	}
+	for i, extractor := range extractors {
+		log.Println(`made cofig`)
 
 		//TODO each extractor needs a scheduler if it is there.
 		taskFn := func(order int) func() {
-			log.Println(ins, `schedulers is `, schedule)
-			fmt.Println(`in order `, order, len(mutexes))
+
 			ch := mutexes[order]
-			var dmux *dlock.DMutex
-			if dlockEnabled {
-				k := fmt.Sprintf(`%d`, order)
-				dmux = dl.NewMutex(ctx, k)
-				fmt.Println(`dlock enabled`)
-			}
 			return func() {
 				//TODO add dlock
-				if dlockEnabled && dmux != nil {
-
+				if extractor.DistributedLock != nil {
+					k := fmt.Sprintf(`%d`, order)
+					dmux := extractor.DistributedLock.NewMutex(ctx, k)
 					if err := dmux.Lock(); err != nil {
-						fmt.Println(IncrefName, `dmux.Lock():`, err.Error())
+						fmt.Println(`dmux.Lock():`, err.Error())
 						return
 					}
 					defer dmux.Unlock()
@@ -129,22 +109,22 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 				select {
 				case n := <-ch:
 					//TODO report health and runnning state
-					stats, err := extraction.Refresh(ctx, _cfg, IncrefName)
+					stats, err := extraction.Refresh(ctx, extractor)
 					if err != nil {
-						log.Fatalf(`incref[%s] failed:%s`, ins, err.Error())
+						log.Fatalf(`incref[%d] failed:%s`, order, err.Error())
 						return
 					}
-					log.Println(IncrefName, ins, stats)
+					log.Println(order, stats)
 					mutexes[order] <- n + 1
 				case <-time.After(time.Second * 10):
-					log.Println(`it seems another task is runnig`, IncrefName, ins, order)
+					log.Println(`it seems another task is runnig`, order)
 
 				}
 
 			}
 		}
 
-		scheduler.AddFunc(schedule, taskFn(i))
+		scheduler.AddFunc(extractor.Scheduler, taskFn(i))
 
 	}
 	scheduler.Start()
