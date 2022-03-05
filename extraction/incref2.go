@@ -26,7 +26,10 @@ func (self *Extractor) Close() error {
 	self.ir.Close()
 	self.prog.Close()
 	self.eventBus.Close()
-	self.DistributedLock.Close()
+	if self.DistributedLock != nil {
+		self.DistributedLock.Close()
+	}
+
 	return nil
 }
 
