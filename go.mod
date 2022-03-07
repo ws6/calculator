@@ -11,7 +11,7 @@ require (
 	github.com/tidwall/gjson v1.14.0
 	github.com/ws6/dlock v0.0.0-20210914210446-143d6f4ba022
 	github.com/ws6/klib v0.0.0-20220307002325-8f858d18029b
-	github.com/ws6/msi v1.2.2-0.20220304190908-61c003568428
+	github.com/ws6/msi v1.2.2-0.20220307194032-6c9c9d32ff15
 )
 
 require (
