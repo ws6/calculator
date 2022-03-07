@@ -10,7 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1
 	github.com/tidwall/gjson v1.14.0
 	github.com/ws6/dlock v0.0.0-20210914210446-143d6f4ba022
-	github.com/ws6/klib v0.0.0-20220304001217-91e9c04c2e28
+	github.com/ws6/klib v0.0.0-20220307002325-8f858d18029b
 	github.com/ws6/msi v1.2.2-0.20220304190908-61c003568428
 )
 
@@ -48,3 +48,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
+
+// replace github.com/ws6/klib => ../../../github.com/ws6/klib

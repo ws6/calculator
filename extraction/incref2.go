@@ -20,9 +20,15 @@ type Extractor struct {
 	DistributedLock *dlock.Dlock
 	eventBusTopic   string
 	Scheduler       string
+	msgChan         chan *klib.Message
 }
 
+// msgChan := make(chan *klib.Message, GetProducerChanCap(extractor.Cfg))
+// defer close(msgChan)
+// return ret, nil
+
 func (self *Extractor) Close() error {
+	close(self.msgChan)
 	self.ir.Close()
 	self.prog.Close()
 	self.eventBus.Close()
@@ -36,6 +42,7 @@ func (self *Extractor) Close() error {
 func NewExtractor(ctx context.Context, cfg *confighelper.SectionConfig, IncrefName string) (*Extractor, error) {
 	ret := new(Extractor)
 	ret.Cfg = cfg
+	ret.msgChan = make(chan *klib.Message, GetProducerChanCap(ret.Cfg))
 
 	dlockConfigSection, err := cfg.Configer.String(fmt.Sprintf(`%s::dlock_config_section`, cfg.SectionName))
 	if err == nil && dlockConfigSection != "" {
@@ -48,6 +55,7 @@ func NewExtractor(ctx context.Context, cfg *confighelper.SectionConfig, IncrefNa
 		if err != nil {
 			return nil, fmt.Errorf(`NewDlock:%s`, err.Error())
 		}
+		fmt.Println(`dlock enabled`)
 	}
 
 	eventBus, err := GetEventBus(cfg)
@@ -91,26 +99,19 @@ func NewExtractor(ctx context.Context, cfg *confighelper.SectionConfig, IncrefNa
 	}
 
 	ret.prog = prog
-
-	return ret, nil
-}
-func Refresh(ctx context.Context, extractor *Extractor) (*RefreshStat, error) {
-	return new(RefreshStat), nil
-}
-func Refreshbak(ctx context.Context, extractor *Extractor) (*RefreshStat, error) {
-	IncrefName := extractor.ir.Type()
-	defer func() {
-		fmt.Println(`Refresh exist`, IncrefName)
-	}()
-
-	msgChan := make(chan *klib.Message, GetProducerChanCap(extractor.Cfg))
-	defer close(msgChan)
 	go func() {
-		if err := extractor.eventBus.ProduceChan(ctx, extractor.eventBusTopic, msgChan); err != nil {
+		if err := ret.eventBus.ProduceChan(ctx, ret.eventBusTopic, ret.msgChan); err != nil {
 			log.Errorf(`ProduceChan:%s`, err.Error())
 		}
 	}()
+	return ret, nil
+}
 
+func Refresh(ctx context.Context, extractor *Extractor) (*RefreshStat, error) {
+	IncrefName := extractor.ir.Type()
+	defer func() {
+		fmt.Println(`Refresh exist 2`, IncrefName)
+	}()
 	ret := new(RefreshStat)
 
 	progress, err := extractor.prog.GetProgress(extractor.ir.Name())
@@ -161,7 +162,7 @@ func Refreshbak(ctx context.Context, extractor *Extractor) (*RefreshStat, error)
 		}
 		MandateHeaders(extractor.ir, topub)
 		select {
-		case msgChan <- topub:
+		case extractor.msgChan <- topub:
 			log.Debug(`publised message`)
 		case <-ctx.Done(): //!!missing the last item update progress; overlap
 			break
