@@ -470,6 +470,8 @@ github.com/ws6/msi v1.2.2-0.20220304190908-61c003568428 h1:8DyuOANTbJZszJVyFSomS
 github.com/ws6/msi v1.2.2-0.20220304190908-61c003568428/go.mod h1:jESM2KDBQho7wl3f2nL05iakT2uWBhdOEaJr2IBgkPI=
 github.com/ws6/msi v1.2.2-0.20220307194032-6c9c9d32ff15 h1:8D9a3B7LhcZcj5U/MEze4rOWs8Q7j5OyjonYsRwXKyM=
 github.com/ws6/msi v1.2.2-0.20220307194032-6c9c9d32ff15/go.mod h1:fBsHvIVM+76wB2cVtdwxpp0CiMb6cBE93eR+htIk0b4=
+github.com/ws6/msi v1.2.2-0.20220311180953-e1a28ea5023c h1:CZQekN38836Q6h9Q/TNt6m3kf7OGEy8XvezkRN2H+5Q=
+github.com/ws6/msi v1.2.2-0.20220311180953-e1a28ea5023c/go.mod h1:fBsHvIVM+76wB2cVtdwxpp0CiMb6cBE93eR+htIk0b4=
 github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c h1:u40Z8hqBAAQyv+vATcGgV0YCnDjqSL7/q/JyPhhJSPk=
 github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c/go.mod h1:lB8K/P019DLNhemzwFU4jHLhdvlE6uDZjXFejJXr49I=
 github.com/xdg/stringprep v1.0.0 h1:d9X0esnoa3dFsV0FG35rAT0RIhYFlPq7MiP+DW89La0=
