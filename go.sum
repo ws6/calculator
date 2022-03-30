@@ -464,6 +464,8 @@ github.com/ws6/klib v0.0.0-20220303004408-38b4a32d5c32/go.mod h1:12l8dLFnxB2kpK3
 github.com/ws6/klib v0.0.0-20220304001217-91e9c04c2e28 h1:aESnm7zPYwZWlLZLDJgTcd+V1qVjBd2J/RSzMQMhtEo=
 github.com/ws6/klib v0.0.0-20220304001217-91e9c04c2e28/go.mod h1:12l8dLFnxB2kpK3xrWoPLCVoBZyzamzLcVuIvdXCDnQ=
 github.com/ws6/klib v0.0.0-20220307002325-8f858d18029b/go.mod h1:12l8dLFnxB2kpK3xrWoPLCVoBZyzamzLcVuIvdXCDnQ=
+github.com/ws6/klib v0.0.0-20220330210154-d1df7f5ba76b h1:+W/opy+yTGiY5Xo+fu66y37MZgiSyu6MzbwIBEMtjQM=
+github.com/ws6/klib v0.0.0-20220330210154-d1df7f5ba76b/go.mod h1:12l8dLFnxB2kpK3xrWoPLCVoBZyzamzLcVuIvdXCDnQ=
 github.com/ws6/msi v1.2.2-0.20220223233655-f72b2e1df9e5 h1:eEDTspVWO30YhmbyYwRzx2yhwpTPufmjIuC6qWRBZIY=
 github.com/ws6/msi v1.2.2-0.20220223233655-f72b2e1df9e5/go.mod h1:jESM2KDBQho7wl3f2nL05iakT2uWBhdOEaJr2IBgkPI=
 github.com/ws6/msi v1.2.2-0.20220304190908-61c003568428 h1:8DyuOANTbJZszJVyFSomSxxMeKGTYgvnYQSw3S12aGU=
