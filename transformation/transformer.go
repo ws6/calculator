@@ -142,10 +142,10 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 
 	//get afterTransformFuncs
 	afterTransformFuns := GetAllAfterTransformFunc(_tr)
-
+	errChan := make(chan error, 1) //do not share with other goroutine
 	eventbus.ConsumeLoop(ctx, eventBusTopic, func(kmsg *klib.Message) error {
 		_producerChan := make(chan *klib.Message, size)
-		errChan := make(chan error, 1)
+
 		go func() {
 			defer close(_producerChan)
 			errChan <- tr.Transform(ctx, kmsg, _producerChan)
@@ -153,9 +153,7 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 		if err := <-errChan; err != nil {
 			return fmt.Errorf(`Transform:%s`, err.Error())
 		}
-		if err != nil {
-			return err
-		}
+
 		//install life cycle callbacks - unordered
 		for outMsg := range _producerChan {
 			for _, cb := range afterTransformFuns {
