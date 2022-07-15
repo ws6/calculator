@@ -10,6 +10,8 @@ import (
 
 	"github.com/ws6/calculator/utils/confighelper"
 
+	"reflect"
+	"runtime"
 	"sync"
 
 	"github.com/ws6/klib"
@@ -29,7 +31,13 @@ type Transformer interface {
 	Close() error
 }
 
+type AfterTransformFunc func(t Transformer, ctx context.Context, in *klib.Message, out *klib.Message) error
+
 type MessageRouter map[string]chan *klib.Message
+
+func GetFunctionName(i interface{}) string {
+	return runtime.FuncForPC(reflect.ValueOf(i).Pointer()).Name()
+}
 
 //TransformLoop
 //init a consumer
@@ -132,10 +140,37 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 		}
 	}()
 
-	eventbus.ConsumeLoop(ctx, eventBusTopic, func(kmsg *klib.Message) error {
+	//get afterTransformFuncs
+	afterTransformFuns := GetAllAfterTransformFunc(_tr)
 
-		if err := tr.Transform(ctx, kmsg, producerChan); err != nil {
+	eventbus.ConsumeLoop(ctx, eventBusTopic, func(kmsg *klib.Message) error {
+		_producerChan := make(chan *klib.Message, size)
+		errChan := make(chan error, 1)
+		go func() {
+			defer close(_producerChan)
+			errChan <- tr.Transform(ctx, kmsg, _producerChan)
+		}()
+		if err := <-errChan; err != nil {
+			return fmt.Errorf(`Transform:%s`, err.Error())
+		}
+		if err != nil {
 			return err
+		}
+		//install life cycle callbacks - unordered
+		for outMsg := range _producerChan {
+			for _, cb := range afterTransformFuns {
+				//outMsg could get modified after fn call
+				if err := cb(tr, ctx, kmsg, outMsg); err != nil {
+					return fmt.Errorf(`AfterTransformFunc(%s):%s`, GetFunctionName(cb), err.Error())
+				}
+			}
+			select {
+			case producerChan <- outMsg: //forwarding or unchanged
+				continue
+			case <-ctx.Done():
+				return ctx.Err()
+			}
+
 		}
 
 		return nil
@@ -157,12 +192,15 @@ func GetAllTypeNames() []string {
 	return ret
 }
 
-var RegisterType, GetTransformerType, GetAllType = func() (
+var RegisterType, GetTransformerType, GetAllType, AddAfterTransform, GetAllAfterTransformFunc = func() (
 	func(Transformer),
 	func(string) Transformer,
 	func() []Transformer,
+	func(Transformer, AfterTransformFunc),
+	func(Transformer) []AfterTransformFunc,
 ) {
 	cache := make(map[string]Transformer)
+	afterTransformFuncCache := make(map[string][]AfterTransformFunc)
 	var lock = &sync.Mutex{}
 	return func(ir Transformer) {
 			lock.Lock()
@@ -184,6 +222,20 @@ var RegisterType, GetTransformerType, GetAllType = func() (
 				ret = append(ret, ir)
 			}
 			return ret
+		},
+		func(t Transformer, f AfterTransformFunc) {
+			lock.Lock()
+			afterTransformFuncCache[t.Type()] = append(afterTransformFuncCache[t.Type()], f)
+			lock.Unlock()
+		},
+		func(t Transformer) []AfterTransformFunc {
+			lock.Lock()
+			found, ok := afterTransformFuncCache[t.Type()]
+			lock.Unlock()
+			if ok {
+				return found
+			}
+			return nil
 		}
 
 }()

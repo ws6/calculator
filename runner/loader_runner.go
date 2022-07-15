@@ -18,7 +18,7 @@ import (
 func RunLoaders(ctx context.Context, configer config.Configer) error {
 
 	allTypes := load.GetAllTypeNames()
-	log.Println(`registered transformers are`, strings.Join(allTypes, ","))
+	log.Println(`registered loaders are`, strings.Join(allTypes, ","))
 	// extractor.GetAllType()
 	//get installed
 
