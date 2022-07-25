@@ -142,37 +142,69 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 
 	//get afterTransformFuncs
 	afterTransformFuns := GetAllAfterTransformFunc(_tr)
-	errChan := make(chan error, 1) //do not share with other goroutine
-	eventbus.ConsumeLoop(ctx, eventBusTopic, func(kmsg *klib.Message) error {
+	withCallBacks := func(kmsg *klib.Message) error {
+		errChan := make(chan error, 2) //do not share with other goroutine
 		_producerChan := make(chan *klib.Message, size)
+		ctx2, cancelFn2 := context.WithCancel(ctx)
+		defer cancelFn2()
 
+		var wg sync.WaitGroup
+		wg.Add(2)
 		go func() {
+			defer wg.Done()
 			defer close(_producerChan)
-			errChan <- tr.Transform(ctx, kmsg, _producerChan)
+			errChan <- tr.Transform(ctx2, kmsg, _producerChan)
 		}()
+		go func() {
+			defer wg.Done()
+			//install life cycle callbacks - unordered
+			for outMsg := range _producerChan {
+				for _, cb := range afterTransformFuns {
+					//outMsg could get modified after fn call
+					if err := cb(tr, ctx2, kmsg, outMsg); err != nil {
+						cancelFn2()
+						errChan <- fmt.Errorf(`AfterTransformFunc(%s):%s`, GetFunctionName(cb), err.Error())
+						return
+					}
+				}
+				select {
+				case producerChan <- outMsg: //forwarding or unchanged
+					continue
+				case <-ctx2.Done():
+					errChan <- ctx2.Err()
+					return
+				}
+
+			}
+		}()
+		wg.Wait()
+
 		if err := <-errChan; err != nil {
 			return fmt.Errorf(`Transform:%s`, err.Error())
 		}
 
-		//install life cycle callbacks - unordered
-		for outMsg := range _producerChan {
-			for _, cb := range afterTransformFuns {
-				//outMsg could get modified after fn call
-				if err := cb(tr, ctx, kmsg, outMsg); err != nil {
-					return fmt.Errorf(`AfterTransformFunc(%s):%s`, GetFunctionName(cb), err.Error())
-				}
-			}
-			select {
-			case producerChan <- outMsg: //forwarding or unchanged
-				continue
-			case <-ctx.Done():
-				return ctx.Err()
-			}
-
-		}
-
 		return nil
 
+	}
+	withoutCallBacks := func(kmsg *klib.Message) error {
+
+		if err := tr.Transform(ctx, kmsg, producerChan); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	haveCallbacks := false
+	if len(afterTransformFuns) > 0 {
+		haveCallbacks = true
+	}
+
+	eventbus.ConsumeLoop(ctx, eventBusTopic, func(kmsg *klib.Message) error {
+		if haveCallbacks {
+			return withCallBacks(kmsg)
+		}
+		//withoutcallbacks is not heavy
+		return withoutCallBacks(kmsg)
 	})
 
 	fmt.Println(`exit...`)
