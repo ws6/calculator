@@ -2,6 +2,7 @@ package extraction
 
 import (
 	"context"
+	"strconv"
 
 	"fmt"
 
@@ -10,6 +11,10 @@ import (
 
 	"github.com/ws6/dlock"
 	"github.com/ws6/klib"
+)
+
+const (
+	DEFAULT_PROGESS_BATCH_SIZE = 1000
 )
 
 type Extractor struct {
@@ -137,6 +142,13 @@ func Refresh(ctx context.Context, extractor *Extractor) (*RefreshStat, error) {
 	if ok {
 		foreached = true
 	}
+	//save_progress_batch_size
+	SaveProgressBatchSize := int64(DEFAULT_PROGESS_BATCH_SIZE)
+	if s, ok := extractor.Cfg.ConfigMap[`save_progress_batch_size`]; ok {
+		if n, err := strconv.ParseInt(s, 10, 64); err == nil && n > 0 {
+			SaveProgressBatchSize = n
+		}
+	}
 	for item := range ch {
 
 		ret.Total++
@@ -169,7 +181,13 @@ func Refresh(ctx context.Context, extractor *Extractor) (*RefreshStat, error) {
 
 		}
 		extractor.ir.UpdateProgress(item, progress)
-
+		if SaveProgressBatchSize != 0 && ret.Total >= SaveProgressBatchSize {
+			if ret.Total%SaveProgressBatchSize == 0 {
+				if err := extractor.prog.SaveProgress(extractor.ir.Name(), progress); err != nil {
+					return ret, fmt.Errorf(`SaveProgress:%s`, err.Error())
+				}
+			}
+		}
 	}
 
 	return ret, extractor.prog.SaveProgress(extractor.ir.Name(), progress)

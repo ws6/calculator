@@ -35,7 +35,7 @@ func (cfg *SectionConfig) GetConfigArray(key string) []string {
 	}
 	_sp := strings.Split(valStr, ",")
 	sp := []string{}
-	for _, v := range _sp {
+	for _, v := range _sp { //!!there could be empty
 		sp = append(sp, strings.TrimSpace(v))
 	}
 	return sp
