@@ -56,7 +56,7 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 	extractors := []*extraction.Extractor{}
 
 	for _, ins := range installed {
-
+		fmt.Println(ins)
 		cfg, err := confighelper.GetSectionHasRef(configer, ins)
 		if err != nil {
 			log.Fatalf(`installed section[%s]:%s`, ins, err.Error())
@@ -72,6 +72,11 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 			log.Fatal(`installed section:`, err.Error())
 			return err
 		}
+
+		// for k, v := range _cfg.ConfigMap {
+		// 	fmt.Println(ins, k, v)
+		// }
+
 		extractor, err := extraction.NewExtractor(ctx, _cfg, IncrefName)
 		if err != nil {
 			return fmt.Errorf(`NewExtractor[%s]:%s`, IncrefName, err.Error())
@@ -87,11 +92,11 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 		extractors = append(extractors, extractor)
 
 	}
-	for i, extractor := range extractors {
-		log.Println(`made cofig`)
+	for i, _extractor := range extractors {
+		log.Println(`made cofig`, _extractor.Cfg.SectionName)
 
 		//TODO each extractor needs a scheduler if it is there.
-		taskFn := func(order int) func() {
+		taskFn := func(order int, extractor *extraction.Extractor) func() {
 
 			ch := mutexes[order]
 			return func() {
@@ -124,7 +129,7 @@ func RunExtractors(ctx context.Context, configer config.Configer) error {
 			}
 		}
 
-		scheduler.AddFunc(extractor.Scheduler, taskFn(i))
+		scheduler.AddFunc(_extractor.Scheduler, taskFn(i, _extractor))
 
 	}
 	scheduler.Start()

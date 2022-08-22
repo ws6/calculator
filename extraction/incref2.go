@@ -47,6 +47,7 @@ func (self *Extractor) Close() error {
 func NewExtractor(ctx context.Context, cfg *confighelper.SectionConfig, IncrefName string) (*Extractor, error) {
 	ret := new(Extractor)
 	ret.Cfg = cfg
+
 	ret.msgChan = make(chan *klib.Message, GetProducerChanCap(ret.Cfg))
 
 	dlockConfigSection, err := cfg.Configer.String(fmt.Sprintf(`%s::dlock_config_section`, cfg.SectionName))
@@ -84,20 +85,21 @@ func NewExtractor(ctx context.Context, cfg *confighelper.SectionConfig, IncrefNa
 	if irPre == nil {
 		return nil, fmt.Errorf(`incref [%s] not exist`, IncrefName)
 	}
-	ir, err := irPre.NewIncref(cfg)
+	cfg2 := cfg.Copy()
+	ir, err := irPre.NewIncref(cfg2)
 	if err != nil {
 		return nil, fmt.Errorf(`NewIncref[%s]:%s`, IncrefName, err.Error())
 	}
 	ret.ir = ir
 
-	progDriver, err := cfg.Configer.String(
-		fmt.Sprintf(`%s::progressor`, cfg.SectionName),
-	)
-	if err != nil {
-		return nil, fmt.Errorf(`progDriver:%s`, err.Error())
-	}
-
-	prog, err := InitProgrssorFromConfigSection(cfg.Configer, progDriver)
+	// progDriver, err := cfg.Configer.String(
+	// 	fmt.Sprintf(`%s::progressor`, cfg.SectionName),
+	// )
+	// if err != nil {
+	// 	return nil, fmt.Errorf(`progDriver:%s`, err.Error())
+	// }
+	progDriver := cfg2.ConfigMap[`progressor`]
+	prog, err := InitProgrssorFromConfigSection(cfg2.Configer, progDriver)
 
 	if err != nil {
 		return nil, fmt.Errorf(`InitProgrssorFromConfigSection:%s`, err.Error())
@@ -113,7 +115,7 @@ func NewExtractor(ctx context.Context, cfg *confighelper.SectionConfig, IncrefNa
 }
 
 func Refresh(ctx context.Context, extractor *Extractor) (*RefreshStat, error) {
-	IncrefName := extractor.ir.Type()
+	IncrefName := extractor.ir.Name()
 	defer func() {
 		fmt.Println(`Refresh exist 2`, IncrefName)
 	}()

@@ -72,10 +72,14 @@ func NewIncrefConfigFromConfiger(configer config.Configer, sectionName string) (
 	if err != nil {
 		return nil, err
 	}
-	ret.ConfigMap, err = confighelper.GetSectionHasRef(ret.Configer, ret.SectionName)
+	_m, err := confighelper.GetSectionHasRef(ret.Configer, ret.SectionName)
 	if err != nil {
 		return nil, fmt.Errorf(`no section:%s`, err.Error())
 	}
+	for k, v := range _m {
+		ret.ConfigMap[k] = v //copied
+	}
+
 	return ret, nil
 }
 
@@ -183,6 +187,7 @@ func GetEventBus(cfg *confighelper.SectionConfig) (*klib.Klib, error) {
 }
 
 func GetEventBusTopic(cfg *confighelper.SectionConfig) (string, error) {
+	return cfg.ConfigMap[`event_bus_topic`], nil
 	return cfg.Configer.String(fmt.Sprintf(`%s::event_bus_topic`, cfg.SectionName))
 }
 func GetProducerChanCap(cfg *confighelper.SectionConfig) int {

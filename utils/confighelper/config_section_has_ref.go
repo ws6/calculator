@@ -18,6 +18,18 @@ type SectionConfig struct {
 	ConfigMap map[string]string
 }
 
+func (self *SectionConfig) Copy() *SectionConfig {
+	ret := new(SectionConfig)
+	ret.Configer = self.Configer
+	ret.SectionName = self.SectionName
+	ret.ConfigMap = make(map[string]string)
+
+	for k, v := range self.ConfigMap {
+		ret.ConfigMap[k] = v
+	}
+	return ret
+}
+
 func isSectionName(s string) bool {
 	s = strings.TrimSpace(s)
 	if !strings.HasPrefix(s, "[") {
