@@ -145,6 +145,7 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 	withCallBacks := func(kmsg *klib.Message) error {
 		errChan := make(chan error, 2) //do not share with other goroutine
 		_producerChan := make(chan *klib.Message, size)
+		wgDone := make(chan bool)
 		ctx2, cancelFn2 := context.WithCancel(ctx)
 		defer cancelFn2()
 
@@ -153,17 +154,25 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 		go func() {
 			defer wg.Done()
 			defer close(_producerChan)
-			errChan <- tr.Transform(ctx2, kmsg, _producerChan)
+
+			if err := tr.Transform(ctx2, kmsg, _producerChan); err != nil {
+				errChan <- err
+			}
+			fmt.Println(`Transform finished`)
 		}()
 		go func() {
+			defer func() {
+				fmt.Println(`afterTransformFuns finished`)
+			}()
 			defer wg.Done()
 			//install life cycle callbacks - unordered
 			for outMsg := range _producerChan {
 				for _, cb := range afterTransformFuns {
 					//outMsg could get modified after fn call
 					if err := cb(tr, ctx2, kmsg, outMsg); err != nil {
-						cancelFn2()
+
 						errChan <- fmt.Errorf(`AfterTransformFunc(%s):%s`, GetFunctionName(cb), err.Error())
+						cancelFn2()
 						return
 					}
 				}
@@ -171,20 +180,26 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 				case producerChan <- outMsg: //forwarding or unchanged
 					continue
 				case <-ctx2.Done():
+
 					errChan <- ctx2.Err()
 					return
 				}
 
 			}
 		}()
-		wg.Wait()
 
-		if err := <-errChan; err != nil {
-			return fmt.Errorf(`Transform:%s`, err.Error())
+		go func() {
+			wg.Wait()
+			close(wgDone)
+		}()
+		defer close(errChan)
+		select {
+		case <-wgDone:
+			return nil
+		case err := <-errChan:
+			return err
 		}
-
 		return nil
-
 	}
 	withoutCallBacks := func(kmsg *klib.Message) error {
 
@@ -201,8 +216,10 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 
 	eventbus.ConsumeLoop(ctx, eventBusTopic, func(kmsg *klib.Message) error {
 		if haveCallbacks {
+
 			return withCallBacks(kmsg)
 		}
+
 		//withoutcallbacks is not heavy
 		return withoutCallBacks(kmsg)
 	})
