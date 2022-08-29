@@ -158,12 +158,10 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 			if err := tr.Transform(ctx2, kmsg, _producerChan); err != nil {
 				errChan <- err
 			}
-			fmt.Println(`Transform finished`)
+
 		}()
 		go func() {
-			defer func() {
-				fmt.Println(`afterTransformFuns finished`)
-			}()
+
 			defer wg.Done()
 			//install life cycle callbacks - unordered
 			for outMsg := range _producerChan {
