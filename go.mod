@@ -10,7 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/tidwall/gjson v1.14.0
 	github.com/ws6/dlock v0.0.0-20210914210446-143d6f4ba022
-	github.com/ws6/klib v0.0.0-20230222194218-87f15c501686
+	github.com/ws6/klib v0.0.0-20230224225441-b03571a5f22c
 	github.com/ws6/msi v1.2.2
 )
 
@@ -34,7 +34,7 @@ require (
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.26.0 // indirect
 	github.com/prometheus/procfs v0.6.0 // indirect
-	github.com/segmentio/kafka-go v0.4.38 // indirect
+	github.com/segmentio/kafka-go v0.4.39 // indirect
 	github.com/shiena/ansicolor v0.0.0-20200904210342-c7312218db18 // indirect
 	github.com/streadway/amqp v1.0.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect

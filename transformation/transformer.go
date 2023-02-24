@@ -8,6 +8,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/sirupsen/logrus"
+
 	"github.com/ws6/calculator/utils/confighelper"
 
 	"reflect"
@@ -75,6 +77,7 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 	if err != nil {
 		return fmt.Errorf(`NewKlib:%s`, err.Error())
 	}
+
 	//the consumer group designed is from each section
 	consumerGroupId := cfg[`consumer_group_id`]
 	if consumerGroupId == "" {
@@ -112,6 +115,11 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 	messagebus, err := klib.NewKlib(producerConfig)
 	if err != nil {
 		return fmt.Errorf(`producer NewKlib:%s`, err.Error())
+	}
+
+	if pe, ok := tr.(klib.ProducerErrorHandler); ok {
+		logrus.Info(`Installed ProducerErrorHandler for %s`, _tr.Type())
+		messagebus.ProducerErrorHandler = pe
 	}
 	size := 1000
 	if n, err := configer.Configer.Int(fmt.Sprintf(`%s::producer_cap`, configer.SectionName)); err == nil {
