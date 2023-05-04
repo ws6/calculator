@@ -10,7 +10,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/tidwall/gjson v1.14.0
 	github.com/ws6/dlock v0.0.0-20210914210446-143d6f4ba022
-	github.com/ws6/klib v0.0.0-20230224225441-b03571a5f22c
+	github.com/ws6/klib v0.0.0-20230504153041-de148e9bdd07
 	github.com/ws6/msi v1.2.2
 )
 
@@ -41,7 +41,7 @@ require (
 	github.com/tidwall/pretty v1.2.0 // indirect
 	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d // indirect
 	golang.org/x/net v0.0.0-20220706163947-c90051bbdb60 // indirect
-	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
