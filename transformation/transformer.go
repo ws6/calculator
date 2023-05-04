@@ -81,6 +81,9 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 	//the consumer group designed is from each section
 	consumerGroupId := cfg[`consumer_group_id`]
 	if consumerGroupId == "" {
+		consumerGroupId = eventbus.GetConsumerGroupId() //getting it from ENV if exists or from klib config
+	}
+	if consumerGroupId == "" {
 		return fmt.Errorf(`%s::consumer_group_id is empty`, configer.SectionName)
 	}
 	eventbus.SetConsumerGroupId(consumerGroupId)
