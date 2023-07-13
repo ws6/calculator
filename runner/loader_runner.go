@@ -12,7 +12,7 @@ import (
 	"github.com/ws6/calculator/extraction"
 	"github.com/ws6/calculator/utils/confighelper"
 
-	"github.com/beego/beego/v2/core/config"
+	"github.com/ws6/calculator/utils/config"
 )
 
 func RunLoaders(ctx context.Context, configer config.Configer) error {

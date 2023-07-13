@@ -13,7 +13,7 @@ import (
 
 	"github.com/ws6/calculator/extraction"
 
-	"github.com/beego/beego/v2/core/config"
+	"github.com/ws6/calculator/utils/config"
 )
 
 func RunTransformers(ctx context.Context, configer config.Configer) error {

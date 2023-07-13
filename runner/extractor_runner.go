@@ -15,9 +15,9 @@ import (
 	"github.com/ws6/calculator/extraction"
 	"github.com/ws6/calculator/utils/confighelper"
 
-	"github.com/beego/beego/v2/core/config"
-	beego "github.com/beego/beego/v2/server/web"
+	// beego "github.com/beego/beego/v2/server/web"
 	"github.com/robfig/cron/v3"
+	"github.com/ws6/calculator/utils/config"
 )
 
 func GetBinPath() (string, error) {
@@ -28,8 +28,24 @@ func GetBinPath() (string, error) {
 	return filepath.Dir(e), nil
 }
 
+func getExecutableDir() string {
+	ex, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+	exPath := filepath.Dir(ex)
+	return exPath
+}
+
+func getDefaultAppConf() string {
+	executableDir := getExecutableDir()
+	return filepath.Join(executableDir, "conf/app.conf")
+}
+
 func GetConfiger() (config.Configer, error) {
-	return beego.AppConfig, nil
+
+	return config.NewConfig("ini", getDefaultAppConf())
+
 }
 
 //RunExtractors TODO add to cron by option

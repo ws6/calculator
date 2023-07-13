@@ -10,7 +10,7 @@ import (
 	"github.com/ws6/calculator/utils/confighelper"
 	"github.com/ws6/calculator/utils/loghelper"
 
-	"github.com/beego/beego/v2/core/config"
+	"github.com/ws6/calculator/utils/config"
 	"github.com/ws6/klib"
 )
 

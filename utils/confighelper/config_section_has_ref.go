@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/beego/beego/v2/core/config"
+	"github.com/ws6/calculator/utils/config"
 )
 
 //section configer enhancer

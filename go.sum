@@ -187,6 +187,8 @@ github.com/golang/snappy v0.0.1/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEW
 github.com/golang/snappy v0.0.3/go.mod h1:/XxbfmMg8lxefKM7IXC3fBNl/7bRcc72aCRzEWrmP2Q=
 github.com/gomodule/redigo v1.8.2/go.mod h1:P9dn9mFrCBvWhGE1wpxx6fgq7BAeLBk+UUUzlpkBYO0=
 github.com/gomodule/redigo v1.8.5/go.mod h1:P9dn9mFrCBvWhGE1wpxx6fgq7BAeLBk+UUUzlpkBYO0=
+github.com/gomodule/redigo v1.8.9 h1:Sl3u+2BI/kk+VEatbj0scLdrFhjPmbxOc1myhDP41ws=
+github.com/gomodule/redigo v1.8.9/go.mod h1:7ArFNvsTjH8GMMzB4uy1snslv2BwmginuMs06a1uzZE=
 github.com/gomodule/redigo v2.0.0+incompatible h1:K/R+8tc58AaqLkqG2Ol3Qk+DR/TlNuhuh457pBFPtt0=
 github.com/gomodule/redigo v2.0.0+incompatible/go.mod h1:B4C85qUVwatsJoIUNIfCRsp7qO0iAmpGFZ4EELWSbC4=
 github.com/google/btree v0.0.0-20180813153112-4030bb1f1f0c/go.mod h1:lNA+9X1NB3Zf8V7Ke586lFgjr2dZNuvo3lPJSGZ5JPQ=
@@ -462,6 +464,8 @@ github.com/urfave/cli v1.20.0/go.mod h1:70zkFmudgCuE/ngEzBv17Jvp/497gISqfk5gWijb
 github.com/urfave/cli v1.22.1/go.mod h1:Gos4lmkARVdJ6EkW0WaNv/tZAAMe9V7XWyB60NtXRu0=
 github.com/ws6/dlock v0.0.0-20210914210446-143d6f4ba022 h1:OPWNpquBo7L/87DFo87FQ6loWIFOrc/b3z7k9PVWeGM=
 github.com/ws6/dlock v0.0.0-20210914210446-143d6f4ba022/go.mod h1:Zy+CxG5w0QdNwI3opggkmlwZ485WLMDN1Kym85tryfY=
+github.com/ws6/klib v0.0.0-20230504153041-de148e9bdd07 h1:W07I0xMv8HAafSXloEKzkvRY/zc2p9SHLqdT0j+02Ok=
+github.com/ws6/klib v0.0.0-20230504153041-de148e9bdd07/go.mod h1:0ePw5DcfRmgXBgP/2Psyqj9DvQwuVP8Tdo4RrqDQoAw=
 github.com/ws6/msi v1.2.2 h1:lgn12l0NCXIQNB022WuFs9R4j29IlS+iTMKWQIh6sqw=
 github.com/ws6/msi v1.2.2/go.mod h1:fBsHvIVM+76wB2cVtdwxpp0CiMb6cBE93eR+htIk0b4=
 github.com/xdg/scram v1.0.5 h1:TuS0RFmt5Is5qm9Tm2SoD89OPqe4IRiFtyFY4iwWXsw=

@@ -3,15 +3,20 @@ module github.com/ws6/calculator
 go 1.17
 
 require (
-	github.com/beego/beego/v2 v2.0.2
+	 
 	github.com/denisenkom/go-mssqldb v0.12.0
-	github.com/gomodule/redigo v2.0.0+incompatible
+	github.com/gomodule/redigo v1.8.9
 	github.com/robfig/cron/v3 v3.0.1
 	github.com/sirupsen/logrus v1.9.0
 	github.com/tidwall/gjson v1.14.0
 	github.com/ws6/dlock v0.0.0-20210914210446-143d6f4ba022
 	github.com/ws6/klib v0.0.0-20230504153041-de148e9bdd07
 	github.com/ws6/msi v1.2.2
+)
+
+require (
+	github.com/mitchellh/mapstructure v1.4.1
+	github.com/pkg/errors v0.9.1
 )
 
 require (
@@ -27,9 +32,7 @@ require (
 	github.com/klauspost/compress v1.16.5 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mijia/modelq v0.0.0-20171015114825-4f1eeb750b3f // indirect
-	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
-	github.com/pkg/errors v0.9.1 // indirect
 	github.com/prometheus/client_golang v1.11.0 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
 	github.com/prometheus/common v0.26.0 // indirect
@@ -49,4 +52,4 @@ require (
 )
 
 // replace github.com/ws6/klib => ../../../github.com/ws6/klib
-replace github.com/ws6/klib => ../../../github.com/ws6/klib
+// replace github.com/ws6/klib => ../../../github.com/ws6/klib
