@@ -1,10 +1,11 @@
 package memprogressor
 
 import (
-	"calculator/extraction/progressor"
 	"sync"
 
-	"github.com/beego/beego/v2/core/config"
+	"github.com/ws6/calculator/extraction/progressor"
+
+	"github.com/ws6/calculator/utils/config"
 )
 
 const (

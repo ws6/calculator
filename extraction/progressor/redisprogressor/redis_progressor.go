@@ -3,10 +3,11 @@ package redisprogressor
 //redis_progressor.go implementation of progressor backen in redis without expire.
 
 import (
-	"calculator/extraction/progressor"
 	"encoding/json"
 	"fmt"
 	"log"
+
+	"github.com/ws6/calculator/extraction/progressor"
 
 	"sync"
 
@@ -15,7 +16,7 @@ import (
 
 	"time"
 
-	"github.com/beego/beego/v2/core/config"
+	"github.com/ws6/calculator/utils/config"
 
 	"github.com/gomodule/redigo/redis"
 )

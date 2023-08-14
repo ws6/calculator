@@ -8,8 +8,8 @@ import (
 
 	"github.com/ws6/calculator/extraction/progressor"
 
-	"github.com/beego/beego/v2/core/config"
 	_ "github.com/denisenkom/go-mssqldb"
+	"github.com/ws6/calculator/utils/config"
 	"github.com/ws6/msi"
 )
 
