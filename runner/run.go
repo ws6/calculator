@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 )
@@ -23,7 +24,7 @@ func Run(ctx context.Context) {
 	if err := RunTransformers(ctx, configer); err != nil {
 		log.Fatal(`RunTransformers runner:%s`, err.Error())
 	}
-
+	fmt.Println(`started transformer`)
 	//block here
 	if err := RunExtractors(ctx, configer); err != nil {
 		log.Fatal(`RunExtractors runner:%s`, err.Error())

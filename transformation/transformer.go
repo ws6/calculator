@@ -50,6 +50,7 @@ func GetFunctionName(i interface{}) string {
 func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _tr Transformer) error {
 	tr, err := _tr.NewTransformer(configer)
 	if err != nil {
+		fmt.Println(`NewTransformer err`)
 		return fmt.Errorf(`NewTransformer:%s`, err.Error())
 	}
 	//_tr.Close()?
@@ -87,6 +88,7 @@ func TransformLoop(ctx context.Context, configer *confighelper.SectionConfig, _t
 		return fmt.Errorf(`%s::consumer_group_id is empty`, configer.SectionName)
 	}
 	eventbus.SetConsumerGroupId(consumerGroupId)
+	fmt.Println(`consumerGroupId==>`, consumerGroupId)
 	//get event bus topic
 	eventBusTopic := cfg[`event_bus_topic`]
 	if eventBusTopic == "" {
